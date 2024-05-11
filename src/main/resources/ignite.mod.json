@@ -1,0 +1,7 @@
+{
+    "id": "customitemapi",
+    "version": "1.0.0",
+    "mixins": [
+        "mixins.customitemapi.core.json"
+    ]
+}

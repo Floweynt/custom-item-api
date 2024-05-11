@@ -1,0 +1,6 @@
+name: DataDrivenTest
+version: 1.0.0
+main: com.floweytf.customitemapi.datadriven.PluginMain
+description: An example plugin
+author: :3
+api-version: '1.20'
