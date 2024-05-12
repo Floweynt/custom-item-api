@@ -1,8 +1,9 @@
 package com.floweytf.customitemapi.impl;
 
+import com.floweytf.customitemapi.CustomItemAPI;
 import com.floweytf.customitemapi.api.CustomItemRegistry;
 import com.floweytf.customitemapi.api.item.CustomItem;
-import com.floweytf.customitemapi.api.item.CustomItemType;
+import com.floweytf.customitemapi.api.item.CustomItemTypeHandle;
 import com.floweytf.customitemapi.helpers.CustomItemInstance;
 import com.google.common.base.Preconditions;
 import net.minecraft.world.item.Item;
@@ -11,15 +12,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class CustomItemRegistryImpl implements CustomItemRegistry {
     private final static CustomItemRegistryImpl INSTANCE = new CustomItemRegistryImpl();
-    private final Map<NamespacedKey, CustomItemType> registry = new HashMap<>();
-    private final Map<Material, CustomItemType> defaultRegistry = new EnumMap<>(Material.class);
+    private final Map<NamespacedKey, CustomItemTypeHandle> registry = new HashMap<>();
+    private final Map<Material, CustomItemTypeHandle> defaultRegistry = new EnumMap<>(Material.class);
     private boolean isFrozen = false;
 
     private CustomItemRegistryImpl() {
@@ -35,7 +34,7 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
     }
 
     @Override
-    public CustomItemType register(NamespacedKey key, Supplier<CustomItem> custom, Material material) {
+    public CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> custom, Material material) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(custom);
         Preconditions.checkNotNull(material);
@@ -46,13 +45,13 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
             throw new IllegalArgumentException("duplicate key " + key.asString());
         }
 
-        final var type = new CustomItemType(custom, key, material);
+        final var type = new CustomItemTypeHandleImpl(custom, key, material);
         registry.put(key, type);
         return type;
     }
 
     @Override
-    public CustomItemType registerDefault(CustomItemType custom) {
+    public CustomItemTypeHandle registerDefault(CustomItemTypeHandle custom) {
         Preconditions.checkNotNull(custom);
 
         onMutate();
@@ -65,8 +64,28 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
         return custom;
     }
 
+    @Override
+    public Set<NamespacedKey> keys() {
+        return Collections.unmodifiableSet(registry.keySet());
+    }
+
+    @Override
+    public Collection<CustomItemTypeHandle> values() {
+        return Collections.unmodifiableCollection(registry.values());
+    }
+
+    @Override
+    public Set<Map.Entry<NamespacedKey, CustomItemTypeHandle>> entries() {
+        return Collections.unmodifiableSet(registry.entrySet());
+    }
+
+    @Override
+    public Collection<CustomItemTypeHandle> defaultRegistrations() {
+        return Collections.unmodifiableCollection(defaultRegistry.values());
+    }
+
     @Nullable
-    public CustomItemType get(NamespacedKey key) {
+    public CustomItemTypeHandle get(NamespacedKey key) {
         return registry.get(key);
     }
 
@@ -87,5 +106,6 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
 
     public void freeze() {
         isFrozen = true;
+        CustomItemAPI.LOGGER.info("Loaded {} items and {} defaults", registry.size(), defaultRegistry.size());
     }
 }

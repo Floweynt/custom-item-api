@@ -1,7 +1,6 @@
 package com.floweytf.customitemapi.registry;
 
 import com.floweytf.customitemapi.CompoundTagBuilder;
-import com.floweytf.customitemapi.api.CustomItemAPI;
 import com.floweytf.customitemapi.helpers.ItemStackStateManager;
 import com.floweytf.customitemapi.impl.CustomItemRegistryImpl;
 import com.mojang.brigadier.Command;
@@ -32,7 +31,6 @@ import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
 public class CommandRegister {
-
     @SafeVarargs
     public static <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
         String key,
@@ -90,7 +88,7 @@ public class CommandRegister {
     public static @Nullable ItemStack makeItem(ResourceLocation id, int count, @Nullable CompoundTag extraTag) {
         extraTag = extraTag == null ? new CompoundTag() : extraTag;
         final var item = CustomItemRegistryImpl.getInstance().get(CraftNamespacedKey.fromMinecraft(id));
-        if(item == null) {
+        if (item == null) {
             return null;
         }
 
@@ -116,7 +114,7 @@ public class CommandRegister {
 
             final var stack = makeItem(id, count, tag);
 
-            if(stack == null) {
+            if (stack == null) {
                 context.getSource().sendFailure(Component.literal("Item " + id + " not found"));
                 return 0;
             }

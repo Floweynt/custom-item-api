@@ -10,7 +10,8 @@ class ApiMeta {
 
     static {
         try {
-            IMPL_VERSION = (Version) Class.forName("com.floweytf.customitemapi.CustomItemAPI").getField("API_VERSION").get(null);
+            IMPL_VERSION =
+                (Version) Class.forName("com.floweytf.customitemapi.CustomItemAPI").getField("API_VERSION").get(null);
 
             if (!API_VERSION.isCompatibleImplementation(IMPL_VERSION)) {
                 throw new RuntimeException("Api version " + API_VERSION + " not compatible with " + IMPL_VERSION);

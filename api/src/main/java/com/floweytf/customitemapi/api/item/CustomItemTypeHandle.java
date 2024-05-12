@@ -5,5 +5,8 @@ import org.bukkit.NamespacedKey;
 
 import java.util.function.Supplier;
 
-public record CustomItemType(Supplier<CustomItem> factory, NamespacedKey key, Material baseItem) {
+public interface CustomItemTypeHandle {
+    Supplier<CustomItem> factory();
+    NamespacedKey key();
+    Material baseItem();
 }

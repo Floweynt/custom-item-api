@@ -1,10 +1,13 @@
 package com.floweytf.customitemapi.api;
 
 import com.floweytf.customitemapi.api.item.CustomItem;
-import com.floweytf.customitemapi.api.item.CustomItemType;
+import com.floweytf.customitemapi.api.item.CustomItemTypeHandle;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public interface CustomItemRegistry {
@@ -12,7 +15,13 @@ public interface CustomItemRegistry {
         return ApiMeta.REGISTRY;
     }
 
-    CustomItemType register(NamespacedKey key, Supplier<CustomItem> custom, Material material);
+    CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> custom, Material material);
 
-    CustomItemType registerDefault(CustomItemType custom);
+    CustomItemTypeHandle registerDefault(CustomItemTypeHandle custom);
+
+    Set<NamespacedKey> keys();
+    Collection<CustomItemTypeHandle> values();
+    Set<Map.Entry<NamespacedKey, CustomItemTypeHandle>> entries();
+
+    Collection<CustomItemTypeHandle> defaultRegistrations();
 }

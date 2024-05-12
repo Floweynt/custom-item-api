@@ -1,5 +1,8 @@
 package com.floweytf.customitemapi.datadriven;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+
 import java.text.DecimalFormat;
 import java.util.TreeMap;
 
@@ -37,5 +40,9 @@ public class Utils {
             return ROMAN_NUMERAL_MAP.get(number);
         }
         return ROMAN_NUMERAL_MAP.get(l) + toRoman(number - l);
+    }
+
+    public static TextColor colorFromString(String color) {
+        return color.startsWith("#") ? TextColor.fromHexString(color) : NamedTextColor.NAMES.value(color);
     }
 }

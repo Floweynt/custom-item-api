@@ -1,8 +1,11 @@
 package com.floweytf.customitemapi.datadriven.json;
 
-import com.floweytf.customitemapi.datadriven.Lazy;
 import com.floweytf.customitemapi.api.item.CustomItem;
+import com.floweytf.customitemapi.datadriven.Lazy;
 import com.floweytf.customitemapi.datadriven.json.tags.TaggedItemComponent;
+import com.floweytf.customitemapi.datadriven.registry.MonumentaLocations;
+import com.floweytf.customitemapi.datadriven.registry.MonumentaRarities;
+import com.floweytf.customitemapi.datadriven.registry.MonumentaRegions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.inventory.ItemFlag;
@@ -10,15 +13,14 @@ import org.bukkit.inventory.ItemFlag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class StatelessJsonCustomItem implements CustomItem {
     private final Component name;
     private final List<Component> lore;
-    private final Optional<JsonCustomItem.Rarity> rarity;
-    private final Optional<JsonCustomItem.Region> region;
-    private final Optional<JsonCustomItem.Location> location;
+    private final Optional<MonumentaRarities> rarity;
+    private final Optional<MonumentaRegions> region;
+    private final Optional<MonumentaLocations> location;
     private final Optional<Class<?>> pluginImpl; // TODO: implement this
     private final TriState hasGlint;
     private final List<TaggedItemComponent> components;
@@ -28,8 +30,8 @@ public class StatelessJsonCustomItem implements CustomItem {
 
     StatelessJsonCustomItem(
         Component name, List<Component> lore,
-        Optional<JsonCustomItem.Rarity> rarity, Optional<JsonCustomItem.Region> region,
-        Optional<JsonCustomItem.Location> location,
+        Optional<MonumentaRarities> rarity, Optional<MonumentaRegions> region,
+        Optional<MonumentaLocations> location,
         Optional<Class<?>> pluginImpl,
         TriState hasGlint, List<TaggedItemComponent> components
     ) {
@@ -52,7 +54,7 @@ public class StatelessJsonCustomItem implements CustomItem {
 
     private List<Component> renderLore() {
         final var computedLore = new ArrayList<Component>();
-        final Consumer<Component> loreAppender =
+        final ComponentWriter loreAppender =
             text -> computedLore.add(text.applyFallbackStyle(JsonCustomItem.DEFAULT_LORE_STYLE));
 
         components.forEach(component -> component.putComponentsStart(loreAppender));

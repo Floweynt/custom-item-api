@@ -10,4 +10,11 @@ public class Utils {
             return null;
         return mapper.apply(value);
     }
+
+    public static long profile(Runnable func) {
+        long start = System.currentTimeMillis();
+        func.run();
+        long end = System.currentTimeMillis();
+        return end - start;
+    }
 }

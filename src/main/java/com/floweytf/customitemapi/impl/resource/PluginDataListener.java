@@ -1,6 +1,7 @@
 package com.floweytf.customitemapi.impl.resource;
 
 import com.floweytf.customitemapi.CustomItemAPI;
+import com.floweytf.customitemapi.Utils;
 import com.floweytf.customitemapi.api.resource.DatapackResourceManager;
 import com.floweytf.customitemapi.impl.CustomItemAPIImpl;
 import com.google.gson.Gson;
@@ -12,7 +13,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                         k.withPath(p -> p.substring(PREFIX.length() + 1, p.length() - SUFFIX.length())),
                         new Gson().fromJson(v.openAsReader(), JsonElement.class)
                     );
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (Throwable e) {
+                    CustomItemAPI.LOGGER.error("While loading entry {}", k, e);
                 }
             });
 
@@ -47,7 +47,7 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
     }
 
     public void reload(boolean isFirst) {
-        try {
+        long ms = Utils.profile(() -> {
             CustomItemAPIImpl.getInstance().loaders.forEach(loaderEntry -> {
                 final var loader = loaderEntry.second();
                 final var loaderPrefix = loaderEntry.first();
@@ -63,10 +63,14 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                         entry -> entry.getValue().getAsJsonObject()
                     ));
 
-                loader.load(manager);
+                try {
+                    loader.load(manager);
+                } catch (Throwable e) {
+                    CustomItemAPI.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
+                }
             });
-        } catch (Throwable e) {
-            CustomItemAPI.LOGGER.error("Failed in datapack loading ", e);
-        }
+        });
+
+        CustomItemAPI.LOGGER.info("Datapack loading took {}ms", ms);
     }
 }
