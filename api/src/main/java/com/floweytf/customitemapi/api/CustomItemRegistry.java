@@ -15,11 +15,15 @@ public interface CustomItemRegistry {
         return ApiMeta.REGISTRY;
     }
 
-    CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> factory, Material material);
+    // registration methods
+
+    CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> factory, Material material, boolean isStateless);
 
     void registerVariant(CustomItemTypeHandle custom, String key, Supplier<CustomItem> factory);
 
     void registerDefault(CustomItemTypeHandle custom);
+
+    // access methods
 
     Set<NamespacedKey> keys();
 

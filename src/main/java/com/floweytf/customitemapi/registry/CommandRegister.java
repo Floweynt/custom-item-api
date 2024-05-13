@@ -1,6 +1,6 @@
 package com.floweytf.customitemapi.registry;
 
-import com.floweytf.customitemapi.CompoundTagBuilder;
+import com.floweytf.customitemapi.helpers.tag.CompoundTagBuilder;
 import com.floweytf.customitemapi.ModMain;
 import com.floweytf.customitemapi.helpers.ItemStackStateManager;
 import com.floweytf.customitemapi.impl.CustomItemRegistryImpl;
@@ -96,7 +96,7 @@ public class CommandRegister {
             throw new IllegalArgumentException("unknown item id");
         }
 
-        if(variant.isPresent() && !item.variants().containsKey(variant.get())) {
+        if(variant.isPresent() && !item.variants().contains(variant.get())) {
             throw new IllegalArgumentException("illegal variant state");
         }
 

@@ -8,6 +8,7 @@ import com.floweytf.customitemapi.helpers.CustomItemInstance;
 import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
@@ -37,7 +38,7 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
     }
 
     @Override
-    public CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> factory, Material material) {
+    public CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> factory, Material material, boolean isStateless) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(factory);
         Preconditions.checkNotNull(material);
@@ -48,19 +49,21 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
             throw new IllegalArgumentException("duplicate key " + key.asString());
         }
 
-        final var type = new CustomItemTypeHandleImpl(factory, key, material);
+        final var type = new CustomItemTypeHandleImpl(factory, key, material, isStateless);
         registry.put(key, type);
         return type;
     }
 
     @Override
     public void registerVariant(CustomItemTypeHandle custom, String key, Supplier<CustomItem> factory) {
+        throw new NotImplementedException();
+        /*
         final var map = ((CustomItemTypeHandleImpl) custom).getVariantsMutable();
         if (map.containsKey(key)) {
             throw new IllegalArgumentException("duplicate key");
         }
 
-        map.put(key, factory);
+        map.put(key, factory);*/
     }
 
     public void registerDefault(CustomItemTypeHandle custom) {
@@ -105,14 +108,17 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
         if (value == null)
             return null;
 
-        return new CustomItemInstance(registry.get(key).factory().get(), value.key(), variant, value.baseItem());
+        if(variant.isPresent())
+            throw new NotImplementedException();
+
+        return ((CustomItemTypeHandleImpl) value).factory().get();
     }
 
     public @Nullable CustomItemInstance create(Item key) {
         final var value = defaultRegistry.get(ModMain.materialFromItem(key));
         if (value == null)
             return null;
-        return new CustomItemInstance(value.factory().get(), value.key(), Optional.empty(), value.baseItem());
+        return ((CustomItemTypeHandleImpl) value).factory().get();
     }
 
     public void freeze() {

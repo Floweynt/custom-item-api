@@ -1,32 +1,35 @@
 package com.floweytf.customitemapi.impl;
 
+import com.floweytf.customitemapi.Lazy;
 import com.floweytf.customitemapi.api.item.CustomItem;
 import com.floweytf.customitemapi.api.item.CustomItemTypeHandle;
-import com.google.common.collect.ImmutableMap;
+import com.floweytf.customitemapi.helpers.CustomItemInstance;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class CustomItemTypeHandleImpl implements CustomItemTypeHandle {
-    private final Supplier<CustomItem> factory;
-    private final NamespacedKey key;
-    private final Material baseItem;
-    private final Map<String, Supplier<CustomItem>> variants = new HashMap<>();
-
-    public CustomItemTypeHandleImpl(Supplier<CustomItem> factory, NamespacedKey key, Material baseItem) {
-        this.factory = factory;
-        this.key = key;
-        this.baseItem = baseItem;
+    private Supplier<CustomItemInstance> convertSupplier(Supplier<CustomItem> suppler, Optional<String> variant) {
+        final Supplier<CustomItemInstance> supplier = () -> new CustomItemInstance(suppler.get(), key, variant, baseItem, isStateless);
+        if(isStateless)
+            return new Lazy<>(supplier);
+        return supplier;
     }
 
-    @Override
-    public @NotNull Supplier<CustomItem> factory() {
-        return factory;
+    private final Supplier<CustomItemInstance> factory;
+    private final NamespacedKey key;
+    private final Material baseItem;
+    private final boolean isStateless;
+    private final Map<String, Supplier<CustomItemInstance>> variants = new HashMap<>();
+
+    public CustomItemTypeHandleImpl(Supplier<CustomItem> factory, NamespacedKey key, Material baseItem, boolean isStateless) {
+        this.key = key;
+        this.baseItem = baseItem;
+        this.isStateless = isStateless;
+        this.factory = convertSupplier(factory, Optional.empty());
     }
 
     @Override
@@ -40,11 +43,11 @@ public class CustomItemTypeHandleImpl implements CustomItemTypeHandle {
     }
 
     @Override
-    public Map<String, Supplier<CustomItem>> variants() {
-        return Collections.unmodifiableMap(variants);
+    public Set<String> variants() {
+        return variants.keySet();
     }
 
-    public Map<String, Supplier<CustomItem>> getVariantsMutable() {
-        return variants;
+    public Supplier<CustomItemInstance> factory() {
+        return factory;
     }
 }

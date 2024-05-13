@@ -1,16 +1,9 @@
 package com.floweytf.customitemapi.helpers;
 
-import com.floweytf.customitemapi.ListTagBuilder;
 import com.floweytf.customitemapi.ModMain;
 import com.floweytf.customitemapi.access.ItemStackAccess;
 import com.floweytf.customitemapi.impl.CustomItemRegistryImpl;
-import com.floweytf.customitemapi.impl.ExtraItemDataImpl;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.jetbrains.annotations.Nullable;
@@ -24,67 +17,21 @@ public class ItemStackStateManager {
 
     // TODO: instead of storing this, we should store a smarter object with better caching tech
     @Nullable
-    private CustomItemInstance customState = null;
+    protected CustomItemInstance customState = null;
 
     @Nullable
     public CustomItemInstance getCustomState() {
         return customState;
     }
 
-    public void recomputeDisplay(ItemStack extra) {
+    public void recomputeDisplay(ItemStack stack) {
         try {
             if (customState == null)
                 return;
 
-            final var root = extra.getOrCreateTag();
+            customState.apply(stack);
 
-            customState.item().getTitle()
-                .map(x -> x.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE))
-                .ifPresent(component -> extra.getOrCreateTagElement("display").putString(
-                    "Name", GsonComponentSerializer.gson().serialize(component)
-                ));
-
-            customState.item().getLore()
-                .ifPresent(component -> {
-                    var tag = extra.getOrCreateTagElement("display");
-                    var lore = new ListTag();
-                    component.forEach(x -> lore.add(StringTag.valueOf(GsonComponentSerializer.gson().serialize(x))));
-                    tag.put("Lore", lore);
-                });
-
-            final var state = new ExtraItemDataImpl();
-            customState.item().configureExtra(state);
-
-            if (state.isUnbreakable()) {
-                root.putBoolean("Unbreakable", true);
-            }
-
-            if (extra.is(Items.WRITTEN_BOOK)) {
-                if (state.getAuthor() != null) {
-                    root.putString("author", state.getAuthor());
-                }
-
-                if (state.getGeneration() != null) {
-                    root.putInt("generation", state.getGeneration().ordinal());
-                }
-
-                if (!state.getBookPages().isEmpty()) {
-                    root.put("pages",
-                        ListTagBuilder.of(state.getBookPages().stream().map(u -> GsonComponentSerializer.gson().serialize(u)).map(StringTag::valueOf)));
-                }
-
-                if (state.getTitle() != null) {
-                    root.put("title", StringTag.valueOf(GsonComponentSerializer.gson().serialize(state.getTitle())));
-                }
-            }
-
-            final var hideFlags = customState.item().hideFlags().stream()
-                .map(flag -> 1 << flag.ordinal())
-                .reduce(0, (a, b) -> a | b);
-
-            root.putInt("HideFlags", hideFlags);
-
-            ((ItemStackAccess) (Object) extra).custom_item_api$setItemRaw(CraftMagicNumbers.getItem(customState.baseItem()));
+            ((ItemStackAccess) (Object) stack).custom_item_api$setItemRaw(CraftMagicNumbers.getItem(customState.baseItem()));
         } catch (Throwable e) {
             ModMain.LOGGER.error("Failed to initialize item: ", e);
         }
@@ -122,4 +69,5 @@ public class ItemStackStateManager {
         storeCustomState(stack);
         recomputeDisplay(stack);
     }
+
 }

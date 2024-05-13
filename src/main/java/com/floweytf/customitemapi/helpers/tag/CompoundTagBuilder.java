@@ -1,4 +1,4 @@
-package com.floweytf.customitemapi;
+package com.floweytf.customitemapi.helpers.tag;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

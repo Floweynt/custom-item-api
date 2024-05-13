@@ -10,6 +10,7 @@ public class SharedConstantsMixin {
     public static boolean IS_RUNNING_IN_IDE;
 
     static {
-        IS_RUNNING_IN_IDE = System.getenv("IS_DEVENV").equals("1");
+        final var isDevEnv = System.getenv("IS_DEVENV");
+        IS_RUNNING_IN_IDE = isDevEnv != null && isDevEnv.equals("1");
     }
 }

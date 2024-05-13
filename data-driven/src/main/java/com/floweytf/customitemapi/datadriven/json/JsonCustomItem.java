@@ -1,6 +1,6 @@
 package com.floweytf.customitemapi.datadriven.json;
 
-import com.floweytf.customitemapi.api.item.CustomItem;
+import com.floweytf.customitemapi.api.CustomItemRegistry;
 import com.floweytf.customitemapi.datadriven.Pair;
 import com.floweytf.customitemapi.datadriven.json.tags.TaggedItemComponent;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaLocations;
@@ -64,7 +64,7 @@ public class JsonCustomItem {
      */
 
 
-    public static Pair<Material, Supplier<CustomItem>> readFromJson(Logger logger, JsonObject resource, NamespacedKey id) {
+    public static boolean readFromJson(CustomItemRegistry registry, Logger logger, JsonObject resource, NamespacedKey id) {
         final var name = getComponent(resource, "name");
         final var material = Objects.requireNonNull(Material.matchMaterial(resource.get("item").getAsString()));
         final var rarity = getStringOrOptionalEmpty(resource, "rarity")
@@ -112,8 +112,8 @@ public class JsonCustomItem {
                     default -> {
                         final var tagInfo = TaggedItemComponent.TAG_PRODUCERS.get(tagId);
                         if (tagInfo == null) {
-                            logger.warn("While parsing " + id + " - unknown tag with id: " + tagId);
-                            return null;
+                            logger.warn("While parsing {} - unknown tag with id: {}", id, tagId);
+                            return false;
                         }
 
                         isStateless |= tagInfo.isStateless();
@@ -130,9 +130,10 @@ public class JsonCustomItem {
                 pluginImpl,
                 hasGlint, tagInfos.stream().map(u -> u.second().get()).toList()
             );
-            return new Pair<>(material, () -> itemInstance);
+            registry.register(id, () -> itemInstance, material, isStateless);
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

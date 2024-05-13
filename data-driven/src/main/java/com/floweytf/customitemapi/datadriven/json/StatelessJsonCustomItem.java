@@ -1,6 +1,7 @@
 package com.floweytf.customitemapi.datadriven.json;
 
 import com.floweytf.customitemapi.api.item.CustomItem;
+import com.floweytf.customitemapi.api.item.ExtraItemData;
 import com.floweytf.customitemapi.datadriven.Lazy;
 import com.floweytf.customitemapi.datadriven.json.tags.TaggedItemComponent;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaLocations;
@@ -90,5 +91,10 @@ public class StatelessJsonCustomItem implements CustomItem {
     @Override
     public @NotNull List<ItemFlag> hideFlags() {
         return List.of(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
+    }
+
+    @Override
+    public void configureExtra(ExtraItemData extra) {
+        components.forEach(component -> component.configure(extra));
     }
 }
