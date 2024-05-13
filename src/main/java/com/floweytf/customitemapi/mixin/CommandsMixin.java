@@ -1,4 +1,4 @@
-package com.floweytf.customitemapi.mixin.core;
+package com.floweytf.customitemapi.mixin;
 
 import com.floweytf.customitemapi.registry.CommandRegister;
 import com.mojang.brigadier.CommandDispatcher;
@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,7 +23,7 @@ public abstract class CommandsMixin {
         method = "<init>(Lnet/minecraft/commands/Commands$CommandSelection;Lnet/minecraft/commands/CommandBuildContext;)V",
         at = @At("TAIL")
     )
-    private void registerCommands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess,
+    private void custom_item_api$registerCommands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess,
                                   CallbackInfo ci) {
         CommandRegister.register(this.dispatcher);
     }

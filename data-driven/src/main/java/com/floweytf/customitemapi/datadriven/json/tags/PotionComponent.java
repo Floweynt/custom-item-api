@@ -2,8 +2,6 @@ package com.floweytf.customitemapi.datadriven.json.tags;
 
 import com.floweytf.customitemapi.datadriven.Utils;
 import com.floweytf.customitemapi.datadriven.json.ComponentWriter;
-import com.floweytf.customitemapi.datadriven.registry.MonumentaCharmAttributes;
-import com.floweytf.customitemapi.datadriven.registry.MonumentaClasses;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaEffects;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -52,7 +50,7 @@ public class PotionComponent implements TaggedItemComponent {
 
             if (instance.effects().displayLevelType() == MonumentaEffects.LevelDisplayType.DISPLAY_LEVEL) {
                 text = text.append(Component.text(
-                   Utils.toRoman((int) instance.level()) + " ", color
+                    Utils.toRoman((int) instance.level()) + " ", color
                 ));
             }
 

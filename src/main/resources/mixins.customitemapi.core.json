@@ -1,8 +1,7 @@
 {
     "required": true,
     "minVersion": "0.8.5",
-    "package": "com.floweytf.customitemapi.mixin.core",
-    "plugin": "com.floweytf.customitemapi.mixin.plugins.CorePlugin",
+    "package": "com.floweytf.customitemapi.mixin",
     "target": "@env(DEFAULT)",
     "compatibilityLevel": "JAVA_17",
     "server": [

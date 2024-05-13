@@ -29,7 +29,8 @@ public class AttributeComponent implements TaggedItemComponent {
 
         for (final var instance : config.attributes) {
             final var color = instance.value() > 0 ? instance.attr.positiveColor() : instance.attr.negativeColor();
-            final var value = instance.attr == MonumentaAttributes.KNOCKBACK_RESISTANCE ? instance.value * 10 : instance.value;
+            final var value = instance.attr == MonumentaAttributes.KNOCKBACK_RESISTANCE ? instance.value * 10 :
+                instance.value;
 
             switch (instance.operation) {
                 case ADD -> output.writeOne(

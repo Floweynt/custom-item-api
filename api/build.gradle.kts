@@ -4,6 +4,7 @@ plugins {
 
 group = "com.floweytf.customitemapi"
 version = "1.0.0"
+val paperVersion: String by project
 
 repositories {
     mavenCentral()
@@ -13,5 +14,5 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:$paperVersion")
 }

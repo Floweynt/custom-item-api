@@ -1,4 +1,4 @@
-package com.floweytf.customitemapi.mixin.core;
+package com.floweytf.customitemapi.mixin;
 
 import net.minecraft.SharedConstants;
 import org.spongepowered.asm.mixin.Mixin;

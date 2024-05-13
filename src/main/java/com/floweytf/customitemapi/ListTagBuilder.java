@@ -3,6 +3,10 @@ package com.floweytf.customitemapi;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class ListTagBuilder implements ITagBuilder {
     private final ListTag tag = new ListTag();
 
@@ -13,7 +17,7 @@ public class ListTagBuilder implements ITagBuilder {
         return new ListTagBuilder();
     }
 
-    public static ListTagBuilder of(Tag value) {
+    public static ListTagBuilder of(Tag... value) {
         return new ListTagBuilder().put(value);
     }
 
@@ -29,9 +33,14 @@ public class ListTagBuilder implements ITagBuilder {
         return new ListTagBuilder().put(value.get()).get();
     }
 
+    public static ListTag of(Stream<Tag> tags) {
+        final var instance = new ListTagBuilder();
+        tags.forEach(instance::put);
+        return instance.get();
+    }
 
-    public ListTagBuilder put(Tag value) {
-        tag.add(value);
+    public ListTagBuilder put(Tag... values) {
+        Collections.addAll(tag, values);
         return this;
     }
 

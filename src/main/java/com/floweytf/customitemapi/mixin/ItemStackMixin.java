@@ -1,4 +1,4 @@
-package com.floweytf.customitemapi.mixin.core;
+package com.floweytf.customitemapi.mixin;
 
 import com.floweytf.customitemapi.access.ItemStackAccess;
 import com.floweytf.customitemapi.helpers.ItemStackStateManager;
@@ -11,9 +11,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttribute;
-import org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttributeInstance;
+import org.bukkit.craftbukkit.v1_19_R3.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.v1_19_R3.attribute.CraftAttributeInstance;
+import org.bukkit.craftbukkit.v1_19_R3.attribute.CraftAttributeMap;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,7 +28,7 @@ import java.util.Objects;
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements ItemStackAccess {
     @Unique
-    private final ItemStackStateManager stateManager = new ItemStackStateManager();
+    private final ItemStackStateManager custom_item_api$stateManager = new ItemStackStateManager();
 
     @Shadow
     @javax.annotation.Nullable
@@ -40,24 +40,24 @@ public class ItemStackMixin implements ItemStackAccess {
         method = "<init>(Lnet/minecraft/world/level/ItemLike;I)V",
         at = @At("TAIL")
     )
-    private void computeItemOnInit(ItemLike item, int count, CallbackInfo ci) {
-        stateManager.loadCustomState(((ItemStack) (Object) this));
+    private void custom_item_api$computeItemOnInit(ItemLike item, int count, CallbackInfo ci) {
+        custom_item_api$stateManager.loadCustomState(((ItemStack) (Object) this));
     }
 
     @Inject(
         method = "load",
         at = @At("RETURN")
     )
-    private void loadCustomItemData$load(CompoundTag tag, CallbackInfo ci) {
-        stateManager.loadCustomState((ItemStack) (Object) this);
+    private void custom_item_api$loadCustomItemData$load(CompoundTag tag, CallbackInfo ci) {
+        custom_item_api$stateManager.loadCustomState((ItemStack) (Object) this);
     }
 
     @Inject(
         method = "setTag",
         at = @At("RETURN")
     )
-    private void loadCustomItemData$setTag(CompoundTag tag, CallbackInfo ci) {
-        stateManager.loadCustomState((ItemStack) (Object) this);
+    private void custom_item_api$loadCustomItemData$setTag(CompoundTag tag, CallbackInfo ci) {
+        custom_item_api$stateManager.loadCustomState((ItemStack) (Object) this);
     }
 
     // Fail on set item
@@ -66,7 +66,7 @@ public class ItemStackMixin implements ItemStackAccess {
         method = "setItem",
         at = @At("HEAD")
     )
-    private void computeItemOnSetItem(Item item, CallbackInfo ci) {
+    private void custom_item_api$computeItemOnSetItem(Item item, CallbackInfo ci) {
         throw new UnsupportedOperationException();
     }
 
@@ -75,17 +75,17 @@ public class ItemStackMixin implements ItemStackAccess {
         method = "save",
         at = @At("HEAD")
     )
-    private void recomputeOnSave(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
-        stateManager.storeCustomState((ItemStack) (Object) this);
+    private void custom_item_api$recomputeOnSave(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
+        custom_item_api$stateManager.storeCustomState((ItemStack) (Object) this);
     }
 
     @Override
-    public @Nullable ItemStackStateManager getStateManager() {
-        return stateManager;
+    public @Nullable ItemStackStateManager custom_item_api$getStateManager() {
+        return custom_item_api$stateManager;
     }
 
     @Override
-    public void setItemRaw(Item item) {
+    public void custom_item_api$setItemRaw(Item item) {
         this.item = item;
     }
 
@@ -93,9 +93,9 @@ public class ItemStackMixin implements ItemStackAccess {
         at = @At("RETURN"),
         method = "getAttributeModifiers"
     )
-    public final Multimap<Attribute, AttributeModifier> addAttributes(Multimap<Attribute, AttributeModifier> returnValue,
-                                                                      EquipmentSlot slot) {
-        final var state = stateManager.getCustomState();
+    public final Multimap<Attribute, AttributeModifier> custom_item_api$addAttributes(Multimap<Attribute, AttributeModifier> returnValue,
+                                                                                      EquipmentSlot slot) {
+        final var state = custom_item_api$stateManager.getCustomState();
         if (state == null)
             return returnValue;
 
@@ -103,7 +103,7 @@ public class ItemStackMixin implements ItemStackAccess {
             if (CraftEquipmentSlot.getNMS(Objects.requireNonNull(attr.getValue().getSlot())) != slot)
                 continue;
             returnValue.put(
-                CraftAttribute.bukkitToMinecraft(attr.getKey()),
+                CraftAttributeMap.toMinecraft(attr.getKey()),
                 CraftAttributeInstance.convert(attr.getValue())
             );
         }

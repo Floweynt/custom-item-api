@@ -57,6 +57,13 @@ public class JsonCustomItem {
         return state;
     }
 
+    /**
+     * ItemVariant API:
+     * An ItemVariant is generically interpreted with the "variant_type" field:
+     * "variant": "masterwork[level=1]"
+     */
+
+
     public static Pair<Material, Supplier<CustomItem>> readFromJson(Logger logger, JsonObject resource, NamespacedKey id) {
         final var name = getComponent(resource, "name");
         final var material = Objects.requireNonNull(Material.matchMaterial(resource.get("item").getAsString()));

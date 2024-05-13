@@ -1,6 +1,6 @@
 package com.floweytf.customitemapi.impl.resource;
 
-import com.floweytf.customitemapi.CustomItemAPI;
+import com.floweytf.customitemapi.ModMain;
 import com.floweytf.customitemapi.Utils;
 import com.floweytf.customitemapi.api.resource.DatapackResourceManager;
 import com.floweytf.customitemapi.impl.CustomItemAPIImpl;
@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                         new Gson().fromJson(v.openAsReader(), JsonElement.class)
                     );
                 } catch (Throwable e) {
-                    CustomItemAPI.LOGGER.error("While loading entry {}", k, e);
+                    ModMain.LOGGER.error("While loading entry {}", k, e);
                 }
             });
 
@@ -66,11 +66,11 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                 try {
                     loader.load(manager);
                 } catch (Throwable e) {
-                    CustomItemAPI.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
+                    ModMain.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
                 }
             });
         });
 
-        CustomItemAPI.LOGGER.info("Datapack loading took {}ms", ms);
+        ModMain.LOGGER.info("Datapack loading took {}ms", ms);
     }
 }

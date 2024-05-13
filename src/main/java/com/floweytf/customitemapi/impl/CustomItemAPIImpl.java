@@ -8,9 +8,9 @@ import com.floweytf.customitemapi.api.resource.DatapackResourceLoader;
 import com.floweytf.customitemapi.helpers.CustomItemInstance;
 import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
-import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,33 +30,35 @@ public class CustomItemAPIImpl implements CustomItemAPI {
     }
 
     @Override
-    public void addDatapackLoader(String key, DatapackResourceLoader loader) {
-        Preconditions.checkNotNull(key);
+    public void addDatapackLoader(@NotNull String prefix, @NotNull DatapackResourceLoader loader) {
+        Preconditions.checkNotNull(prefix);
         Preconditions.checkNotNull(loader);
 
-        if (!ResourceLocation.isValidPath(key)) {
+        if (prefix.matches("a-z0-9/\\._-")) {
             throw new IllegalArgumentException("bad path prefix fragment when registering datapack loader");
         }
-        if (key.endsWith("/")) {
+
+        if (prefix.endsWith("/")) {
             throw new IllegalArgumentException("path prefix must not end with /");
         }
 
-        loaders.add(new Pair<>(key, loader));
+        loaders.add(new Pair<>(prefix, loader));
     }
 
 
     @Override
-    public CustomItem getCustomItem(ItemStack stack) {
+    public CustomItem getCustomItem(@NotNull ItemStack stack) {
         Preconditions.checkNotNull(stack);
 
         if (stack instanceof CraftItemStack craftStack) {
             final var mc = craftStack.handle;
-            return m(((ItemStackAccess) (Object) mc).getStateManager().getCustomState(), CustomItemInstance::item);
+            return m(((ItemStackAccess) (Object) mc).custom_item_api$getStateManager().getCustomState(), CustomItemInstance::item);
         } else {
             throw new IllegalArgumentException("stack must be from paper");
         }
     }
 
+    /*
     @Override
     public NamespacedKey getCustomItemId(ItemStack stack) {
         Preconditions.checkNotNull(stack);
@@ -67,16 +69,16 @@ public class CustomItemAPIImpl implements CustomItemAPI {
         } else {
             throw new IllegalArgumentException("stack must be from paper");
         }
-    }
+    }*/
 
     @SuppressWarnings("UnreachableCode")
     @Override
-    public void forceUpdate(ItemStack stack) {
+    public void forceUpdate(@NotNull ItemStack stack) {
         Preconditions.checkNotNull(stack);
 
         if (stack instanceof CraftItemStack craftStack) {
             final var mc = craftStack.handle;
-            final var state = ((ItemStackAccess) (Object) mc).getStateManager();
+            final var state = ((ItemStackAccess) (Object) mc).custom_item_api$getStateManager();
             if (state.getCustomState() != null) {
                 state.recomputeDisplay(craftStack.handle);
             }

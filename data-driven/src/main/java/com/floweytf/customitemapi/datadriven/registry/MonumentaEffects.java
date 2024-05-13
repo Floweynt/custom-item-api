@@ -69,18 +69,28 @@ public enum MonumentaEffects {
     DURABILITY_INCREASE("DurabilitySave", "Durability", false, PERCENT_BONUS, true),
     MELEE_DAMAGE_WEAKNESS("MeleeWeakness", "Melee Damage", true, PERCENT_NEGATE, true);
 
+    private static final Map<String, MonumentaEffects> TABLE = Arrays.stream(values())
+        .collect(Collectors.toMap(
+            entry -> entry.id,
+            entry -> entry
+        ));
     private final String id;
     private final String displayName;
     private final boolean isNegative;
     private final LevelDisplayType levelDisplayType;
     private final boolean displayDuration;
 
-    MonumentaEffects(String id, String displayName, boolean isNegative, LevelDisplayType levelDisplayType, boolean displayDuration) {
+    MonumentaEffects(String id, String displayName, boolean isNegative, LevelDisplayType levelDisplayType,
+                     boolean displayDuration) {
         this.id = id;
         this.displayName = displayName;
         this.isNegative = isNegative;
         this.levelDisplayType = levelDisplayType;
         this.displayDuration = displayDuration;
+    }
+
+    public static MonumentaEffects fromJson(JsonElement element) {
+        return Objects.requireNonNull(TABLE.get(element.getAsString()));
     }
 
     public String displayName() {
@@ -105,15 +115,5 @@ public enum MonumentaEffects {
         NONE,
         PERCENT,
         DISPLAY_LEVEL;
-    }
-
-    private static final Map<String, MonumentaEffects> TABLE = Arrays.stream(values())
-        .collect(Collectors.toMap(
-            entry -> entry.id,
-            entry -> entry
-        ));
-
-    public static MonumentaEffects fromJson(JsonElement element) {
-        return Objects.requireNonNull(TABLE.get(element.getAsString()));
     }
 }

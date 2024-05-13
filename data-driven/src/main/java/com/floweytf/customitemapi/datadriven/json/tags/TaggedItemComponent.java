@@ -1,5 +1,6 @@
 package com.floweytf.customitemapi.datadriven.json.tags;
 
+import com.floweytf.customitemapi.api.item.ExtraItemData;
 import com.floweytf.customitemapi.datadriven.json.ComponentWriter;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
@@ -18,6 +19,7 @@ public interface TaggedItemComponent {
         .put("quest", QuestComponent.INFO)
         .put("charm", CharmComponent.INFO)
         .put("potion", PotionComponent.INFO)
+        .put("book", BookComponent.INFO)
         .build();
 
     private static TaggedItemComponentInfo pure(TaggedItemComponent value) {
@@ -29,6 +31,10 @@ public interface TaggedItemComponent {
     }
 
     default void putComponentsEnd(ComponentWriter output) {
+
+    }
+
+    default void configure(ExtraItemData data) {
 
     }
 

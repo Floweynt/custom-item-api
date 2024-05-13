@@ -14,7 +14,7 @@ repositories {
 }
 
 val igniteVersion = "1.0.2-SNAPSHOT"
-val paperVersion = "1.20.4-R0.1-SNAPSHOT"
+val paperVersion: String by project
 
 dependencies {
     paperweight.paperDevBundle(paperVersion)
@@ -26,6 +26,7 @@ dependencies {
     implementation("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.19")
     implementation("org.apache.maven.resolver:maven-resolver-transport-http:1.9.19")
     implementation("com.lmax:disruptor:3.4.2")
+    implementation("net.kyori:adventure-text-serializer-gson:4.3.0")
 
     compileOnly("space.vectrix.ignite:ignite-api:$igniteVersion")
     compileOnly("org.spongepowered:mixin:0.8.5")

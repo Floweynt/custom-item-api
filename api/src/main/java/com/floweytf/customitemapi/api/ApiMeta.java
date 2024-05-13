@@ -10,8 +10,7 @@ class ApiMeta {
 
     static {
         try {
-            IMPL_VERSION =
-                (Version) Class.forName("com.floweytf.customitemapi.CustomItemAPI").getField("API_VERSION").get(null);
+            IMPL_VERSION = (Version) Class.forName("com.floweytf.customitemapi.ModMain").getField("API_VERSION").get(null);
 
             if (!API_VERSION.isCompatibleImplementation(IMPL_VERSION)) {
                 throw new RuntimeException("Api version " + API_VERSION + " not compatible with " + IMPL_VERSION);
@@ -21,7 +20,6 @@ class ApiMeta {
                 .getMethod("getInstance").invoke(null);
             API = (CustomItemAPI) Class.forName("com.floweytf.customitemapi.impl.CustomItemAPIImpl")
                 .getMethod("getInstance").invoke(null);
-
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException |
                  NoSuchFieldException e) {
             throw new RuntimeException(e);

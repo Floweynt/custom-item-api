@@ -9,6 +9,7 @@ import com.floweytf.customitemapi.datadriven.registry.MonumentaRegions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,17 +78,17 @@ public class StatelessJsonCustomItem implements CustomItem {
     }
 
     @Override
-    public Optional<Component> getTitle() {
+    public @NotNull Optional<Component> getTitle() {
         return Optional.of(titleSupplier.get());
     }
 
     @Override
-    public Optional<List<Component>> getLore() {
+    public @NotNull Optional<List<Component>> getLore() {
         return Optional.of(loreSupplier.get());
     }
 
     @Override
-    public List<ItemFlag> hideFlags() {
+    public @NotNull List<ItemFlag> hideFlags() {
         return List.of(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
     }
 }

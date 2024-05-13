@@ -1,4 +1,4 @@
-package com.floweytf.customitemapi.mixin.core;
+package com.floweytf.customitemapi.mixin;
 
 import com.floweytf.customitemapi.impl.resource.PluginDataListener;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -18,10 +18,10 @@ public class ReloadableServerResourcesMixin {
         method = "listeners",
         at = @At(
             value = "INVOKE",
-            target = "Ljava/util/List;of(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;" +
-                "Ljava/lang/Object;)Ljava/util/List;")
+            target = "Ljava/util/List;of(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;"
+        )
     )
-    private List<PreparableReloadListener> func(List<PreparableReloadListener> original) {
+    private List<PreparableReloadListener> custom_item_api$addCustomItemAPILoader(List<PreparableReloadListener> original) {
         return Stream.of(original, List.of(PluginDataListener.INSTANCE))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());

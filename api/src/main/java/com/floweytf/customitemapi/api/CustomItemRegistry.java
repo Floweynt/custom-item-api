@@ -15,12 +15,16 @@ public interface CustomItemRegistry {
         return ApiMeta.REGISTRY;
     }
 
-    CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> custom, Material material);
+    CustomItemTypeHandle register(NamespacedKey key, Supplier<CustomItem> factory, Material material);
 
-    CustomItemTypeHandle registerDefault(CustomItemTypeHandle custom);
+    void registerVariant(CustomItemTypeHandle custom, String key, Supplier<CustomItem> factory);
+
+    void registerDefault(CustomItemTypeHandle custom);
 
     Set<NamespacedKey> keys();
+
     Collection<CustomItemTypeHandle> values();
+
     Set<Map.Entry<NamespacedKey, CustomItemTypeHandle>> entries();
 
     Collection<CustomItemTypeHandle> defaultRegistrations();
