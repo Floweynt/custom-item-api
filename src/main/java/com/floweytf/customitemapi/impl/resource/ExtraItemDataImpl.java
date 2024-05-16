@@ -1,8 +1,10 @@
-package com.floweytf.customitemapi.impl;
+package com.floweytf.customitemapi.impl.resource;
 
 import com.floweytf.customitemapi.api.item.ExtraItemData;
+import com.google.common.base.Preconditions;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.meta.BookMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,32 +17,20 @@ public class ExtraItemDataImpl implements ExtraItemData {
     private Component title = null;
 
     @Override
-    public void setUnbreakable(boolean flag) {
-        unbreakable = flag;
-    }
-
-    @Override
-    public void setBookPages(List<Component> text) {
-        if (text == null) {
-            this.text = null;
-            return;
-        }
-
-        this.text = new ArrayList<>(text);
-    }
-
-    @Override
-    public void setBookGeneration(BookMeta.Generation generation) {
+    public void setBookGeneration(BookMeta.@NotNull Generation generation) {
+        Preconditions.checkNotNull(generation);
         this.generation = generation;
     }
 
     @Override
-    public void setBookAuthor(String author) {
+    public void setBookAuthor(@NotNull String author) {
+        Preconditions.checkNotNull(author);
         this.author = author;
     }
 
     @Override
-    public void setBookTitle(Component title) {
+    public void setBookTitle(@NotNull Component title) {
+        Preconditions.checkNotNull(title);
         this.title = title;
     }
 
@@ -56,6 +46,13 @@ public class ExtraItemDataImpl implements ExtraItemData {
         return text;
     }
 
+    @Override
+    public void setBookPages(@NotNull List<Component> pages) {
+        Preconditions.checkNotNull(pages);
+
+        this.text = new ArrayList<>(pages);
+    }
+
     public String getAuthor() {
         return author;
     }
@@ -64,4 +61,8 @@ public class ExtraItemDataImpl implements ExtraItemData {
         return unbreakable;
     }
 
+    @Override
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
+    }
 }

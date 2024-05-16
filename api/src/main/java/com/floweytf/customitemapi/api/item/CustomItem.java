@@ -3,7 +3,6 @@ package com.floweytf.customitemapi.api.item;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.util.TriState;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -11,6 +10,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,9 +27,8 @@ import java.util.Optional;
  * @author Floweynt
  * @since 1.0.0
  */
+@ApiStatus.OverrideOnly
 public interface CustomItem {
-    // Item Appearance
-
     /**
      * Extension point for setting the lore.
      *
@@ -37,7 +36,8 @@ public interface CustomItem {
      * @author Floweynt
      * @since 1.0.0
      */
-    default @NotNull Optional<List<Component>> getLore() {
+    @NotNull
+    default Optional<List<Component>> getLore() {
         return Optional.empty();
     }
 
@@ -48,7 +48,8 @@ public interface CustomItem {
      * @author Floweynt
      * @since 1.0.0
      */
-    default @NotNull Optional<Component> getTitle() {
+    @NotNull
+    default Optional<Component> getTitle() {
         return Optional.empty();
     }
 
@@ -59,7 +60,8 @@ public interface CustomItem {
      * @author Floweynt
      * @since 1.0.0
      */
-    default @NotNull Multimap<Attribute, AttributeModifier> getBaseAttributes() {
+    @NotNull
+    default Multimap<Attribute, AttributeModifier> getBaseAttributes() {
         return ImmutableMultimap.of();
     }
 
@@ -70,11 +72,20 @@ public interface CustomItem {
      * @author Floweynt
      * @since 1.0.0
      */
-    default @NotNull List<ItemFlag> hideFlags() {
+    @NotNull
+    default List<ItemFlag> hideFlags() {
         return List.of();
     }
 
-    default void configureExtra(ExtraItemData extra) {
+    /**
+     * Extension point for configuring misc properties.
+     *
+     * @param extraData The item data to configure.
+     * @author Floweynt
+     * @see ExtraItemData
+     * @since 1.0.0
+     */
+    default void configureExtra(@NotNull ExtraItemData extraData) {
 
     }
 

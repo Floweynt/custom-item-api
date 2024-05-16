@@ -1,69 +1,79 @@
 package com.floweytf.customitemapi.api;
 
-import com.floweytf.customitemapi.api.item.CustomItem;
-import com.floweytf.customitemapi.api.resource.DatapackResourceLoader;
-import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * The main entrypoint into this library.
+ * "Entrypoint" for this library. This is mostly implementation details.
  *
  * @author Floweynt
  * @since 1.0.0
  */
+@ApiStatus.NonExtendable
 public interface CustomItemAPI {
     /**
-     * Obtains an instance of the API.
-     *
-     * @return The API.
-     * @author Floweynt
-     * @since 1.0.0
-     */
-    @NotNull
-    static CustomItemAPI getInstance() {
-        return ApiMeta.API;
-    }
-
-    /**
-     * Obtains the current implementation version.
+     * Obtains the implementation version.
      *
      * @return The implementation version.
      * @author Floweynt
      * @since 1.0.0
      */
     @NotNull
-    static Version implVersion() {
-        return ApiMeta.IMPL_VERSION;
+    static Version getImplVersion() {
+        return ImplLoader.IMPL_VERSION;
     }
 
     /**
-     * Registers a datapack resource loader under a specific prefix.
+     * Obtains the api version.
      *
-     * @param prefix The prefix for resources. The actual prefix (in datapack file) would be [ns]/plugin/[prefix].
-     * @param loader The datapack loader instance, to which load event will be passed.
+     * @return The api version.
      * @author Floweynt
      * @since 1.0.0
      */
-    void addDatapackLoader(@NotNull String prefix, @NotNull DatapackResourceLoader loader);
+    @NotNull
+    static Version getApiVersion() {
+        return ImplLoader.API_VERSION;
+    }
 
     /**
-     * Obtains the {@link CustomItem} associated with an {@link ItemStack}.
+     * Obtains the implementation's instance of CustomItemAPI
      *
-     * @param stack The stack.
-     * @return The associated {@link ItemStack} or null if absent.
+     * @return The implementation.
      * @author Floweynt
      * @since 1.0.0
      */
-    @Nullable
-    CustomItem getCustomItem(@NotNull ItemStack stack);
+    @NotNull
+    static CustomItemAPI getInstance() {
+        return ImplLoader.INSTANCE;
+    }
 
     /**
-     * Forces re-computation of {@link ItemStack} properties.
+     * Obtains the implementation for {@link CustomItemRegistry}
      *
-     * @param stack The stack to force update.
+     * @return The implementation.
      * @author Floweynt
      * @since 1.0.0
      */
-    void forceUpdate(@NotNull ItemStack stack);
+    @NotNull
+    CustomItemRegistry getRegistryInstance();
+
+    /**
+     * Obtains the implementation for {@link CustomItems}
+     *
+     * @return The implementation.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    @NotNull
+    CustomItems getCustomItemsInstance();
+
+    /**
+     * Obtains the implementation for {@link DataLoaderRegistry}
+     *
+     * @return The implementation.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    @NotNull
+    DataLoaderRegistry getDatapacksInstance();
 }

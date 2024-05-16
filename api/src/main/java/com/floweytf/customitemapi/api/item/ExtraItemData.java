@@ -2,13 +2,61 @@ package com.floweytf.customitemapi.api.item;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.meta.BookMeta;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Extra misc data associated with an {@link org.bukkit.inventory.ItemStack}.
+ *
+ * @author Floweynt
+ * @since 1.0.0
+ */
+@ApiStatus.NonExtendable
 public interface ExtraItemData {
-    void setUnbreakable(boolean flag);
-    void setBookPages(List<Component> text);
-    void setBookGeneration(BookMeta.Generation generation);
-    void setBookAuthor(String author);
-    void setBookTitle(Component title);
+    /**
+     * Sets the item to be unbreakable.
+     *
+     * @param unbreakable Whether the item should be unbreakable. False does not do anything.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    void setUnbreakable(boolean unbreakable);
+
+    /**
+     * Sets the book pages components.
+     *
+     * @param pages The list of pages, with one element per page.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    void setBookPages(@NotNull List<Component> pages);
+
+    /**
+     * Sets the generation of the book.
+     *
+     * @param generation The generation of the book.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    void setBookGeneration(@NotNull BookMeta.Generation generation);
+
+    /**
+     * Sets the author of the book.
+     *
+     * @param author The author's name. This cannot be a component.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    void setBookAuthor(@NotNull String author);
+
+    /**
+     * Sets the title of the book.
+     *
+     * @param title The title of the book.
+     * @author Floweynt
+     * @since 1.0.0
+     */
+    void setBookTitle(@NotNull Component title);
 }

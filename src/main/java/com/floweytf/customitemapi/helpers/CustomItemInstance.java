@@ -5,7 +5,7 @@ import com.floweytf.customitemapi.helpers.tag.CachedTagApplicator;
 import com.floweytf.customitemapi.helpers.tag.ListTagBuilder;
 import com.floweytf.customitemapi.helpers.tag.TagApplicator;
 import com.floweytf.customitemapi.helpers.tag.TagBackedTagApplicator;
-import com.floweytf.customitemapi.impl.ExtraItemDataImpl;
+import com.floweytf.customitemapi.impl.resource.ExtraItemDataImpl;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.nbt.ByteTag;
@@ -17,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Optional;
 
 public final class CustomItemInstance {
@@ -30,7 +29,8 @@ public final class CustomItemInstance {
     @Nullable
     private CachedTagApplicator applicator;
 
-    public CustomItemInstance(CustomItem item, NamespacedKey key, Optional<String> variant, Material baseItem, boolean isStateless) {
+    public CustomItemInstance(CustomItem item, NamespacedKey key, Optional<String> variant, Material baseItem,
+                              boolean isStateless) {
         this.item = item;
         this.key = key;
         this.variant = variant;
@@ -50,7 +50,8 @@ public final class CustomItemInstance {
 
         item.getLore()
             .ifPresent(component -> {
-                displayTag.put("Lore", ListTagBuilder.of(component.stream().map(x -> StringTag.valueOf(GsonComponentSerializer.gson().serialize(x)))));
+                displayTag.put("Lore",
+                    ListTagBuilder.of(component.stream().map(x -> StringTag.valueOf(GsonComponentSerializer.gson().serialize(x)))));
             });
 
         if (!displayTag.isEmpty()) {

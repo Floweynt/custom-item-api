@@ -106,7 +106,7 @@ public enum MonumentaEnchantments {
     TRIAGE("monumenta:triage", "Triage", false),
     TRIVIUM("monumenta:trivium", "Trivium", false),
     TWO_HANDED("monumenta:two_handed", "Two Handed", true),
-    UNBREAKABLE("monumenta:unbreakable", "Unbreakable", false),
+    UNBREAKABLE("monumenta:unbreakable", "Unbreakable", true),
     WEIGHTLESS("monumenta:weightless", "Weightless", true),
     RADIANT("monumenta:radiant", "Radiant", true),
     WIND_ASPECT("monumenta:wind_aspect", "Wind Aspect", false),
@@ -136,12 +136,12 @@ public enum MonumentaEnchantments {
     ));
     private final String id;
     private final String displayText;
-    private final boolean shouldDisplayLevel;
+    private final boolean hideLevel;
 
-    MonumentaEnchantments(String id, String displayText, boolean displayLevel) {
+    MonumentaEnchantments(String id, String displayText, boolean hideLevel) {
         this.id = id;
         this.displayText = displayText;
-        this.shouldDisplayLevel = displayLevel;
+        this.hideLevel = hideLevel;
     }
 
     public static MonumentaEnchantments fromJson(JsonElement e) {
@@ -152,8 +152,8 @@ public enum MonumentaEnchantments {
         return id;
     }
 
-    public boolean shouldDisplayLevel() {
-        return shouldDisplayLevel;
+    public boolean hideLevel() {
+        return hideLevel;
     }
 
     public String displayText() {

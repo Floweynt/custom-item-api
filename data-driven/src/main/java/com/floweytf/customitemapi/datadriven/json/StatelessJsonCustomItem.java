@@ -30,21 +30,15 @@ public class StatelessJsonCustomItem implements CustomItem {
     private final Supplier<List<Component>> loreSupplier;
     private final Supplier<Component> titleSupplier;
 
-    StatelessJsonCustomItem(
-        Component name, List<Component> lore,
-        Optional<MonumentaRarities> rarity, Optional<MonumentaRegions> region,
-        Optional<MonumentaLocations> location,
-        Optional<Class<?>> pluginImpl,
-        TriState hasGlint, List<TaggedItemComponent> components
-    ) {
-        this.name = name;
-        this.lore = lore;
-        this.rarity = rarity;
-        this.region = region;
-        this.location = location;
-        this.pluginImpl = pluginImpl;
-        this.hasGlint = hasGlint;
-        this.components = components;
+    StatelessJsonCustomItem(JsonItemFragment fragment) {
+        this.name = fragment.name().orElseThrow();
+        this.lore = fragment.lore().orElseThrow();
+        this.rarity = fragment.rarity();
+        this.region = fragment.region();
+        this.location = fragment.location();
+        this.pluginImpl = fragment.pluginImpl();
+        this.hasGlint = fragment.hasGlint();
+        this.components = fragment.tags().stream().map(u -> u.second().get()).toList();
 
         loreSupplier = new Lazy<>(this::renderLore);
         titleSupplier = new Lazy<>(this::renderTitle);
@@ -94,7 +88,7 @@ public class StatelessJsonCustomItem implements CustomItem {
     }
 
     @Override
-    public void configureExtra(ExtraItemData extra) {
-        components.forEach(component -> component.configure(extra));
+    public void configureExtra(@NotNull ExtraItemData extraData) {
+        components.forEach(component -> component.configure(extraData));
     }
 }

@@ -19,7 +19,7 @@ public class CachedTagApplicator implements TagApplicator {
     }
 
     public void apply(TagApplicator applicator) {
-        for(int i = 0; i < keys.size(); i++) {
+        for (int i = 0; i < keys.size(); i++) {
             applicator.put(keys.get(i), tags.get(i).copy());
         }
     }

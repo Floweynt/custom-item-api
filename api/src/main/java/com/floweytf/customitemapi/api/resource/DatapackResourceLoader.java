@@ -1,5 +1,6 @@
 package com.floweytf.customitemapi.api.resource;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Floweynt
  * @since 1.0.0
  */
+@ApiStatus.OverrideOnly
 public interface DatapackResourceLoader {
     /**
      * Handler for datapack loading.

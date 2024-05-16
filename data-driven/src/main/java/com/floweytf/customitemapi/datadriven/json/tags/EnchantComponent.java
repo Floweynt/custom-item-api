@@ -27,7 +27,7 @@ public class EnchantComponent implements TaggedItemComponent {
         config.enchants.stream().map(instance -> {
             final var main = Component.text(instance.enchant().displayText(), NamedTextColor.GRAY);
 
-            if (instance.enchant.shouldDisplayLevel()) {
+            if (!instance.enchant.hideLevel()) {
                 return main
                     .append(Component.space())
                     .append(Component.text(Utils.toRoman(instance.level), NamedTextColor.GRAY));

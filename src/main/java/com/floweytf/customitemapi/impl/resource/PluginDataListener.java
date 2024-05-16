@@ -1,9 +1,9 @@
 package com.floweytf.customitemapi.impl.resource;
 
-import com.floweytf.customitemapi.ModMain;
+import com.floweytf.customitemapi.CustomItemAPIMain;
 import com.floweytf.customitemapi.Utils;
 import com.floweytf.customitemapi.api.resource.DatapackResourceManager;
-import com.floweytf.customitemapi.impl.CustomItemAPIImpl;
+import com.floweytf.customitemapi.impl.DataLoaderRegistryImpl;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +39,7 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                         new Gson().fromJson(v.openAsReader(), JsonElement.class)
                     );
                 } catch (Throwable e) {
-                    ModMain.LOGGER.error("While loading entry {}", k, e);
+                    CustomItemAPIMain.LOGGER.error("While loading entry {}", k, e);
                 }
             });
 
@@ -48,7 +48,7 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
 
     public void reload(boolean isFirst) {
         long ms = Utils.profile(() -> {
-            CustomItemAPIImpl.getInstance().loaders.forEach(loaderEntry -> {
+            DataLoaderRegistryImpl.getInstance().loaders.forEach(loaderEntry -> {
                 final var loader = loaderEntry.second();
                 final var loaderPrefix = loaderEntry.first();
 
@@ -66,11 +66,11 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                 try {
                     loader.load(manager);
                 } catch (Throwable e) {
-                    ModMain.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
+                    CustomItemAPIMain.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
                 }
             });
         });
 
-        ModMain.LOGGER.info("Datapack loading took {}ms", ms);
+        CustomItemAPIMain.LOGGER.info("Datapack loading took {}ms", ms);
     }
 }

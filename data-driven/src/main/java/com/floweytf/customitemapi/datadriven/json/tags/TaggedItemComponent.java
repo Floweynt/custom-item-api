@@ -20,6 +20,7 @@ public interface TaggedItemComponent {
         .put("charm", CharmComponent.INFO)
         .put("potion", PotionComponent.INFO)
         .put("book", BookComponent.INFO)
+        .put("masterwork", MasterworkComponent.INFO)
         .build();
 
     private static TaggedItemComponentInfo pure(TaggedItemComponent value) {

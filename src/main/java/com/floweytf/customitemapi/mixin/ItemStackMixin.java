@@ -93,7 +93,8 @@ public class ItemStackMixin implements ItemStackAccess {
         at = @At("RETURN"),
         method = "getAttributeModifiers"
     )
-    public final Multimap<Attribute, AttributeModifier> custom_item_api$addAttributes(Multimap<Attribute, AttributeModifier> returnValue,
+    public final Multimap<Attribute, AttributeModifier> custom_item_api$addAttributes(Multimap<Attribute,
+        AttributeModifier> returnValue,
                                                                                       EquipmentSlot slot) {
         final var state = custom_item_api$stateManager.getCustomState();
         if (state == null)

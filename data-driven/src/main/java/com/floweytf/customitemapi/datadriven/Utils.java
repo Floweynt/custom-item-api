@@ -1,9 +1,14 @@
 package com.floweytf.customitemapi.datadriven;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class Utils {
@@ -44,5 +49,17 @@ public class Utils {
 
     public static TextColor colorFromString(String color) {
         return color.startsWith("#") ? TextColor.fromHexString(color) : NamedTextColor.NAMES.value(color);
+    }
+
+    public static Component getComponent(JsonObject object, String key) {
+        return GsonComponentSerializer.gson().deserializeFromTree(object.get(key));
+    }
+
+    public static Optional<String> tryGetString(JsonObject object, String key) {
+        return object.has(key) ? Optional.of(object.get(key).getAsString()) : Optional.empty();
+    }
+
+    public static Optional<JsonElement> tryGetJsonElement(JsonObject object, String key) {
+        return object.has(key) ? Optional.of(object.get(key)) : Optional.empty();
     }
 }
