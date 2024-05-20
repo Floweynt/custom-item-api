@@ -2,7 +2,14 @@ package com.floweytf.customitemapi.impl.resource;
 
 import com.floweytf.customitemapi.api.item.ExtraItemData;
 import com.google.common.base.Preconditions;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import net.kyori.adventure.text.Component;
+import net.minecraft.nbt.CompoundTag;
+import org.apache.commons.lang3.NotImplementedException;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +22,7 @@ public class ExtraItemDataImpl implements ExtraItemData {
     private BookMeta.Generation generation = null;
     private String author = null;
     private Component title = null;
+    private NBTContainer extraTag;
 
     @Override
     public void setBookGeneration(BookMeta.@NotNull Generation generation) {
@@ -34,16 +42,13 @@ public class ExtraItemDataImpl implements ExtraItemData {
         this.title = title;
     }
 
-    public Component getTitle() {
-        return title;
-    }
+    @Override
+    public ReadWriteNBT getNBTTag() {
+        if (extraTag == null) {
+            extraTag = new NBTContainer();
+        }
 
-    public BookMeta.Generation getGeneration() {
-        return generation;
-    }
-
-    public List<Component> getBookPages() {
-        return text;
+        return extraTag;
     }
 
     @Override
@@ -53,16 +58,28 @@ public class ExtraItemDataImpl implements ExtraItemData {
         this.text = new ArrayList<>(pages);
     }
 
-    public String getAuthor() {
+    @Override
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
+    }
+
+    public Component title() {
+        return title;
+    }
+
+    public BookMeta.Generation generation() {
+        return generation;
+    }
+
+    public List<Component> bookPages() {
+        return text;
+    }
+
+    public String author() {
         return author;
     }
 
     public boolean isUnbreakable() {
         return unbreakable;
-    }
-
-    @Override
-    public void setUnbreakable(boolean unbreakable) {
-        this.unbreakable = unbreakable;
     }
 }

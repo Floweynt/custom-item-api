@@ -16,20 +16,20 @@ public class ListTagBuilder implements ITagBuilder {
         return new ListTagBuilder();
     }
 
-    public static ListTagBuilder of(Tag... value) {
-        return new ListTagBuilder().put(value);
+    public static ListTagBuilder of(Tag... tags) {
+        return new ListTagBuilder().put(tags);
     }
 
-    public static ListTagBuilder of(ITagBuilder value) {
-        return new ListTagBuilder().put(value.get());
+    public static ListTagBuilder of(ITagBuilder tag) {
+        return new ListTagBuilder().put(tag.get());
     }
 
-    public static ListTag build(Tag value) {
-        return new ListTagBuilder().put(value).get();
+    public static ListTag build(Tag tag) {
+        return new ListTagBuilder().put(tag).get();
     }
 
-    public static ListTag build(ITagBuilder value) {
-        return new ListTagBuilder().put(value.get()).get();
+    public static ListTag build(ITagBuilder tag) {
+        return new ListTagBuilder().put(tag.get()).get();
     }
 
     public static ListTag of(Stream<Tag> tags) {
@@ -38,8 +38,8 @@ public class ListTagBuilder implements ITagBuilder {
         return instance.get();
     }
 
-    public ListTagBuilder put(Tag... values) {
-        Collections.addAll(tag, values);
+    public ListTagBuilder put(Tag... tags) {
+        Collections.addAll(tag, tags);
         return this;
     }
 

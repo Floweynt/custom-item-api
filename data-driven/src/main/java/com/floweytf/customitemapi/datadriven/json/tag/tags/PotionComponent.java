@@ -1,10 +1,15 @@
-package com.floweytf.customitemapi.datadriven.json.tags;
+package com.floweytf.customitemapi.datadriven.json.tag.tags;
 
+import com.floweytf.customitemapi.api.item.ExtraItemData;
 import com.floweytf.customitemapi.datadriven.Utils;
 import com.floweytf.customitemapi.datadriven.json.ComponentWriter;
+import com.floweytf.customitemapi.datadriven.json.tag.SimpleTaggedComponent;
+import com.floweytf.customitemapi.datadriven.json.tag.TaggedComponentConfig;
+import com.floweytf.customitemapi.datadriven.json.tag.TaggedComponentType;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaEffects;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -12,16 +17,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-public class PotionComponent implements TaggedItemComponent {
-    public static final TaggedItemComponentInfo INFO = new TaggedItemComponentInfo(true, object -> {
-        final var config = Config.fromJson(object);
-        return () -> new PotionComponent(config);
-    });
-
-    private final Config config;
+public class PotionComponent extends SimpleTaggedComponent<PotionComponent.Config> {
+    public static final TaggedComponentType<Config, PotionComponent> TYPE = new TaggedComponentType<>(
+        Config::fromJson,
+        PotionComponent::new
+    );
 
     private PotionComponent(Config config) {
-        this.config = config;
+        super(config);
     }
 
     @Override
@@ -67,6 +70,18 @@ public class PotionComponent implements TaggedItemComponent {
         }
     }
 
+    @Override
+    public void configure(ExtraItemData data) {
+        final var monumentaTag = data.getNBTTag()
+            .getOrCreateCompound("Monumenta")
+            .getOrCreateCompound("Stock")
+            .getCompoundList("Effects");
+
+        for (PotionEffectInstance effect : config.effects) {
+            effect.putTag(monumentaTag);
+        }
+    }
+
     private record PotionEffectInstance(double duration, double level, MonumentaEffects effects) {
         public static PotionEffectInstance fromJson(JsonElement e) {
             return new PotionEffectInstance(
@@ -75,13 +90,25 @@ public class PotionComponent implements TaggedItemComponent {
                 MonumentaEffects.fromJson(e.getAsJsonArray().get(2))
             );
         }
+
+        public void putTag(ReadWriteNBTCompoundList list) {
+            final var tag = list.addCompound();
+            tag.setInteger("EffectDuration", (int) duration);
+            tag.setDouble("EffectStrength", level);
+            tag.setString("EffectType", effects.id());
+        }
     }
 
-    private record Config(List<PotionEffectInstance> effects) {
+    public record Config(List<PotionEffectInstance> effects) implements TaggedComponentConfig<Config> {
         private static Config fromJson(JsonObject e) {
             return new Config(
                 e.get("effects").getAsJsonArray().asList().stream().map(PotionEffectInstance::fromJson).toList()
             );
+        }
+
+        @Override
+        public Config tryMerge(Config other) {
+            return new Config(Utils.joinToImmutable(effects, other.effects));
         }
     }
 }

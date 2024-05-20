@@ -11,7 +11,7 @@ public class TagBackedTagApplicator implements TagApplicator {
     }
 
     @Override
-    public void put(String name, Tag tag) {
-        this.tag.put(name, tag);
+    public void put(String key, Tag tag) {
+        this.tag.put(key, tag);
     }
 }

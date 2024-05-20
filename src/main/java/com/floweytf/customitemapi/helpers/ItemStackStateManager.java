@@ -4,6 +4,9 @@ import com.floweytf.customitemapi.CustomItemAPIMain;
 import com.floweytf.customitemapi.access.ItemStackAccess;
 import com.floweytf.customitemapi.impl.CustomItemRegistryImpl;
 import com.floweytf.customitemapi.impl.item.CustomItemTypeImpl;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
@@ -26,8 +29,9 @@ public class ItemStackStateManager {
 
     public void recomputeDisplay(ItemStack stack) {
         try {
-            if (customState == null)
+            if (customState == null) {
                 return;
+            }
 
             customState.apply(stack);
 
@@ -45,9 +49,10 @@ public class ItemStackStateManager {
         stack.getOrCreateTag().remove(ROOT_TAG_KEY);
 
         // first, we need to sync ID
-        // TODO: give the custom stack a chance to save it's own state
         final var rootTag = stack.getOrCreateTagElement(ROOT_TAG_KEY);
         rootTag.putString(KEY_ID, customState.key().asString());
+        rootTag.putString(KEY_VARIANT, customState.variant());
+        customState.item().writeSaveData(new NBTContainer(rootTag));
     }
 
     public void loadCustomState(ItemStack stack) {
@@ -80,10 +85,15 @@ public class ItemStackStateManager {
             customState = ((CustomItemTypeImpl) type).factory().get();
         }
 
-        if (customState == null)
+        if (customState == null) {
             return;
+        }
 
-        // TODO: give custom state a change to load
+        if (rootTag.contains(KEY_SAVE_DATA)) {
+            rootTag.put(KEY_SAVE_DATA, new CompoundTag());
+        }
+
+        customState.item().readSaveData(new NBTContainer(rootTag));
         storeCustomState(stack);
         recomputeDisplay(stack);
     }

@@ -8,8 +8,12 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Utils {
     private static final DecimalFormat DF = new DecimalFormat("#.####");
@@ -61,5 +65,12 @@ public class Utils {
 
     public static Optional<JsonElement> tryGetJsonElement(JsonObject object, String key) {
         return object.has(key) ? Optional.of(object.get(key)) : Optional.empty();
+    }
+
+    @SafeVarargs
+    public static <T> List<T> joinToImmutable(List<T>... arg) {
+        return Stream.of(arg)
+            .flatMap(Collection::stream)
+            .toList();
     }
 }

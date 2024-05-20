@@ -29,28 +29,28 @@ public class CompoundTagBuilder implements ITagBuilder {
         return new CompoundTagBuilder().put(key, value.get()).get();
     }
 
-    public CompoundTagBuilder put(String string, ITagBuilder value) {
-        tag.put(string, value.get());
+    public CompoundTagBuilder put(String key, ITagBuilder value) {
+        tag.put(key, value.get());
         return this;
     }
 
-    public CompoundTagBuilder put(String string, Tag value) {
-        tag.put(string, value);
+    public CompoundTagBuilder put(String key, Tag value) {
+        tag.put(key, value);
         return this;
     }
 
-    public CompoundTagBuilder put(String string, String value) {
-        tag.putString(string, value);
+    public CompoundTagBuilder put(String key, String value) {
+        tag.putString(key, value);
         return this;
     }
 
-    public CompoundTagBuilder put(String string, int value) {
-        tag.putInt(string, value);
+    public CompoundTagBuilder put(String key, int value) {
+        tag.putInt(key, value);
         return this;
     }
 
-    public CompoundTagBuilder put(String string, byte value) {
-        tag.putByte(string, value);
+    public CompoundTagBuilder put(String key, byte value) {
+        tag.putByte(key, value);
         return this;
     }
 

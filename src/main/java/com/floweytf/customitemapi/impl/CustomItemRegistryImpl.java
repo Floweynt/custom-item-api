@@ -8,23 +8,20 @@ import com.floweytf.customitemapi.helpers.CustomItemInstance;
 import com.floweytf.customitemapi.impl.item.CustomItemTypeImpl;
 import com.floweytf.customitemapi.impl.item.ItemVariantSetImpl;
 import com.google.common.base.Preconditions;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CustomItemRegistryImpl implements CustomItemRegistry {
     private final static CustomItemRegistryImpl INSTANCE = new CustomItemRegistryImpl();
     private final Map<NamespacedKey, ItemVariantSet> registry = new HashMap<>();
     private final Map<Material, CustomItemType> defaultRegistry = new EnumMap<>(Material.class);
+    private final List<String> giveCompletion = new ArrayList<>();
     private boolean isFrozen = false;
-    private Set<ResourceLocation> minecraftKeys = null;
 
     private CustomItemRegistryImpl() {
     }
@@ -54,6 +51,11 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
     }
 
     @Override
+    public void registerAsDefault(CustomItemType type) {
+        defaultRegistry.put(type.baseItem(), type);
+    }
+
+    @Override
     public @NotNull Set<NamespacedKey> keys() {
         return Collections.unmodifiableSet(registry.keySet());
     }
@@ -76,23 +78,24 @@ public class CustomItemRegistryImpl implements CustomItemRegistry {
             return false;
         });
 
-        CustomItemAPIMain.LOGGER.info("Loaded {} items and {} defaults", registry.size(), defaultRegistry.size());
-    }
+        // compute stuff
+        registry.forEach((id, value) -> {
+            giveCompletion.add("\"" + id.toString() + "\"");
+            for (final var variantId : value.variants().keySet()) {
+                giveCompletion.add("\"" + id + "[" + variantId + "]\"");
+            }
+        });
 
-    public Set<ResourceLocation> minecraftKeys() {
-        if (!isFrozen) {
-            throw new IllegalStateException("cannot call minecraftKeys() before registry is frozen");
-        }
-        if (minecraftKeys == null) {
-            minecraftKeys =
-                CustomItemRegistryImpl.getInstance().keys().stream().map(CraftNamespacedKey::toMinecraft).collect(Collectors.toUnmodifiableSet());
-        }
-        return minecraftKeys;
+        CustomItemAPIMain.LOGGER.info("Loaded {} items and {} defaults", registry.size(), defaultRegistry.size());
     }
 
     // getter methods
     public @Nullable ItemVariantSetImpl get(NamespacedKey id) {
         return (ItemVariantSetImpl) registry.get(id);
+    }
+
+    public List<String> getGiveCompletion() {
+        return giveCompletion;
     }
 
     public CustomItemInstance create(Item item) {

@@ -1,7 +1,10 @@
 package com.floweytf.customitemapi.impl.resource;
 
 import com.floweytf.customitemapi.CustomItemAPIMain;
+import com.floweytf.customitemapi.Pair;
 import com.floweytf.customitemapi.Utils;
+import com.floweytf.customitemapi.api.CustomItemAPI;
+import com.floweytf.customitemapi.api.resource.DatapackResourceLoader;
 import com.floweytf.customitemapi.api.resource.DatapackResourceManager;
 import com.floweytf.customitemapi.impl.DataLoaderRegistryImpl;
 import com.google.gson.Gson;
@@ -22,6 +25,11 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
     private static final String PREFIX = "plugin";
     private static final String SUFFIX = ".json";
     private final Map<ResourceLocation, JsonElement> data = new HashMap<>();
+    public static boolean PLUGIN_INIT = false;
+
+    private PluginDataListener() {
+
+    }
 
     @Override
     protected @NotNull Void prepare(@NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
@@ -43,17 +51,19 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                 }
             });
 
-        reload(false);
+        if(PLUGIN_INIT) {
+            reload(false);
+        }
     }
 
     public void reload(boolean isFirst) {
         long ms = Utils.profile(() -> {
-            DataLoaderRegistryImpl.getInstance().loaders.forEach(loaderEntry -> {
+            for (final var loaderEntry : DataLoaderRegistryImpl.getInstance().loaders) {
                 final var loader = loaderEntry.second();
                 final var loaderPrefix = loaderEntry.first();
 
                 if (!(loader.canReload() || isFirst)) {
-                    return;
+                    continue;
                 }
 
                 final DatapackResourceManager manager = () -> data.entrySet().stream()
@@ -68,7 +78,7 @@ public class PluginDataListener extends SimplePreparableReloadListener<Void> {
                 } catch (Throwable e) {
                     CustomItemAPIMain.LOGGER.error("Datapack loading failed for {}", loaderPrefix, e);
                 }
-            });
+            }
         });
 
         CustomItemAPIMain.LOGGER.info("Datapack loading took {}ms", ms);

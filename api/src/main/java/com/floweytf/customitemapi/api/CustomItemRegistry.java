@@ -71,6 +71,13 @@ public interface CustomItemRegistry {
     }
 
     /**
+     * Registers an item variant as a default type.
+     *
+     * @param type The item variant to register
+     */
+    void registerAsDefault(CustomItemType type);
+
+    /**
      * Obtains the set of all registered keys.
      *
      * @return A readonly set of all keys.

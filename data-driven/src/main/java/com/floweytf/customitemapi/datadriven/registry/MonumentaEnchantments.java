@@ -1,6 +1,7 @@
 package com.floweytf.customitemapi.datadriven.registry;
 
 import com.google.gson.JsonElement;
+import org.bukkit.NamespacedKey;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -131,15 +132,15 @@ public enum MonumentaEnchantments {
     EXCAVATOR("monumenta:excavator", "Excavator", true);
 
     private static final Map<String, MonumentaEnchantments> TABLE = Arrays.stream(values()).collect(Collectors.toMap(
-        e -> e.id,
+        e -> e.id.toString(),
         e -> e
     ));
-    private final String id;
+    private final NamespacedKey id;
     private final String displayText;
     private final boolean hideLevel;
 
     MonumentaEnchantments(String id, String displayText, boolean hideLevel) {
-        this.id = id;
+        this.id = NamespacedKey.fromString(id);
         this.displayText = displayText;
         this.hideLevel = hideLevel;
     }
@@ -148,7 +149,7 @@ public enum MonumentaEnchantments {
         return Objects.requireNonNull(TABLE.get(e.getAsString()));
     }
 
-    public String id() {
+    public NamespacedKey id() {
         return id;
     }
 

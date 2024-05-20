@@ -1,7 +1,11 @@
-package com.floweytf.customitemapi.datadriven.json.tags;
+package com.floweytf.customitemapi.datadriven.json.tag.tags;
 
+import com.floweytf.customitemapi.datadriven.PluginMain;
 import com.floweytf.customitemapi.datadriven.Utils;
 import com.floweytf.customitemapi.datadriven.json.ComponentWriter;
+import com.floweytf.customitemapi.datadriven.json.tag.SimpleTaggedComponent;
+import com.floweytf.customitemapi.datadriven.json.tag.TaggedComponentConfig;
+import com.floweytf.customitemapi.datadriven.json.tag.TaggedComponentType;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaCharmAttributes;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaClasses;
 import com.google.gson.JsonElement;
@@ -9,19 +13,18 @@ import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CharmComponent implements TaggedItemComponent {
-    public static final TaggedItemComponentInfo INFO = new TaggedItemComponentInfo(true, object -> {
-        final var config = Config.fromJson(object);
-        return () -> new CharmComponent(config);
-    });
-
-    private final Config config;
+public class CharmComponent extends SimpleTaggedComponent<CharmComponent.Config> {
+    public static final TaggedComponentType<Config, CharmComponent> TYPE = new TaggedComponentType<>(
+        Config::fromJson,
+        CharmComponent::new
+    );
 
     private CharmComponent(Config config) {
-        this.config = config;
+        super(config);
     }
 
     @Override
@@ -64,13 +67,20 @@ public class CharmComponent implements TaggedItemComponent {
         }
     }
 
-    private record Config(MonumentaClasses playerClass, int power, List<CharmAttributeInstance> attributes) {
+    public record Config(MonumentaClasses playerClass, int power,
+                         List<CharmAttributeInstance> attributes) implements TaggedComponentConfig<Config> {
         private static Config fromJson(JsonObject e) {
             return new Config(
                 MonumentaClasses.fromJson(e.get("class")),
                 e.get("power").getAsInt(),
                 e.get("attributes").getAsJsonArray().asList().stream().map(CharmAttributeInstance::fromJson).toList()
             );
+        }
+
+        @Override
+        public @NotNull Config tryMerge(Config other) {
+            PluginMain.LOGGER.warn("duplicate charm tag");
+            return this;
         }
     }
 }

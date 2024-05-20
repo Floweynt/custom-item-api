@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class CustomItemTypeImpl implements CustomItemType {
@@ -33,14 +32,16 @@ public class CustomItemTypeImpl implements CustomItemType {
         this.variantSet = variantSet;
         this.baseItem = baseItem;
         this.isStateless = isStateless;
-        this.factory = convertSupplier(factory, Optional.empty());
+        this.factory = convertSupplier(factory);
     }
 
-    private Supplier<CustomItemInstance> convertSupplier(Supplier<CustomItem> suppler, Optional<String> variant) {
-        final Supplier<CustomItemInstance> supplier = () -> new CustomItemInstance(suppler.get(), key, variant, baseItem,
-            isStateless);
-        if (isStateless)
+    private Supplier<CustomItemInstance> convertSupplier(Supplier<CustomItem> suppler) {
+        final Supplier<CustomItemInstance> supplier = () ->
+            new CustomItemInstance(suppler.get(), key, variant, baseItem, isStateless);
+
+        if (isStateless) {
             return new Lazy<>(supplier);
+        }
         return supplier;
     }
 

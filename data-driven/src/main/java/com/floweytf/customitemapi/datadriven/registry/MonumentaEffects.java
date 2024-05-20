@@ -109,6 +109,10 @@ public enum MonumentaEffects {
         return displayDuration;
     }
 
+    public String id() {
+        return id;
+    }
+
     public enum LevelDisplayType {
         PERCENT_BONUS,
         PERCENT_NEGATE,

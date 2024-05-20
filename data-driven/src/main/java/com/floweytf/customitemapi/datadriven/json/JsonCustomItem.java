@@ -65,10 +65,6 @@ public class JsonCustomItem {
         } else {
             final var data = JsonItemFragment.fromTree(id, resource);
 
-            if (data == null) {
-                throw new RuntimeException("failed to create item " + id);
-            }
-
             final var factory = fromFragment(data);
 
             registry.registerSimple(id, factory, data.baseItem().orElseThrow(), true);

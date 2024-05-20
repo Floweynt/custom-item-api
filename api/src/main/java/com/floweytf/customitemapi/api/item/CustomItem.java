@@ -2,6 +2,9 @@ package com.floweytf.customitemapi.api.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import net.kyori.adventure.text.Component;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -86,7 +89,28 @@ public interface CustomItem {
      * @since 1.0.0
      */
     default void configureExtra(@NotNull ExtraItemData extraData) {
+    }
 
+    /**
+     * Allows reading additional NBT data.
+     *
+     * @param compound The tag to read from.
+     * @author Floweynt
+     * @see ExtraItemData
+     * @since 1.0.0
+     */
+    default void readSaveData(ReadableNBT compound) {
+    }
+
+    /**
+     * Allows writing additional NBT data.
+     *
+     * @param compound The tag to write to.
+     * @author Floweynt
+     * @see ExtraItemData
+     * @since 1.0.0
+     */
+    default void writeSaveData(ReadWriteNBT compound) {
     }
 
     // player interaction events
@@ -106,7 +130,6 @@ public interface CustomItem {
     }
 
     default void onBreak(Player actor, ItemStack rawItem) {
-
     }
 
     default void onConsume(Player actor, ItemStack rawItem) {
@@ -114,6 +137,5 @@ public interface CustomItem {
 
     // world events
     default void onDispense(ItemStack rawItem, Block dispenser) {
-
     }
 }

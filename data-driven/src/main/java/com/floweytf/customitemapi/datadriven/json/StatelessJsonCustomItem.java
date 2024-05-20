@@ -3,12 +3,11 @@ package com.floweytf.customitemapi.datadriven.json;
 import com.floweytf.customitemapi.api.item.CustomItem;
 import com.floweytf.customitemapi.api.item.ExtraItemData;
 import com.floweytf.customitemapi.datadriven.Lazy;
-import com.floweytf.customitemapi.datadriven.json.tags.TaggedItemComponent;
+import com.floweytf.customitemapi.datadriven.json.tag.TaggedComponent;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaLocations;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaRarities;
 import com.floweytf.customitemapi.datadriven.registry.MonumentaRegions;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.util.TriState;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +23,7 @@ public class StatelessJsonCustomItem implements CustomItem {
     private final Optional<MonumentaRegions> region;
     private final Optional<MonumentaLocations> location;
     private final Optional<Class<?>> pluginImpl; // TODO: implement this
-    private final TriState hasGlint;
-    private final List<TaggedItemComponent> components;
+    private final List<TaggedComponent> components;
 
     private final Supplier<List<Component>> loreSupplier;
     private final Supplier<Component> titleSupplier;
@@ -37,8 +35,7 @@ public class StatelessJsonCustomItem implements CustomItem {
         this.region = fragment.region();
         this.location = fragment.location();
         this.pluginImpl = fragment.pluginImpl();
-        this.hasGlint = fragment.hasGlint();
-        this.components = fragment.tags().stream().map(u -> u.second().get()).toList();
+        this.components = fragment.getComponentSuppliers().stream().map(Supplier::get).toList();
 
         loreSupplier = new Lazy<>(this::renderLore);
         titleSupplier = new Lazy<>(this::renderTitle);
@@ -53,7 +50,9 @@ public class StatelessJsonCustomItem implements CustomItem {
         final ComponentWriter loreAppender =
             text -> computedLore.add(text.applyFallbackStyle(JsonCustomItem.DEFAULT_LORE_STYLE));
 
-        components.forEach(component -> component.putComponentsStart(loreAppender));
+        for (final var taggedComponent : components) {
+            taggedComponent.putComponentsStart(loreAppender);
+        }
 
         if (rarity.isPresent() && region.isPresent()) {
             computedLore.add(
@@ -67,7 +66,9 @@ public class StatelessJsonCustomItem implements CustomItem {
 
         this.lore.stream().map(u -> u.applyFallbackStyle(JsonCustomItem.DEFAULT_LORE_STYLE)).forEach(computedLore::add);
 
-        components.forEach(component -> component.putComponentsEnd(loreAppender));
+        for (final var component : components) {
+            component.putComponentsEnd(loreAppender);
+        }
 
         return computedLore;
     }
@@ -89,6 +90,8 @@ public class StatelessJsonCustomItem implements CustomItem {
 
     @Override
     public void configureExtra(@NotNull ExtraItemData extraData) {
-        components.forEach(component -> component.configure(extraData));
+        for (final var component : components) {
+            component.configure(extraData);
+        }
     }
 }

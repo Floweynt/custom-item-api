@@ -6,6 +6,8 @@ import com.floweytf.customitemapi.helpers.tag.ListTagBuilder;
 import com.floweytf.customitemapi.helpers.tag.TagApplicator;
 import com.floweytf.customitemapi.helpers.tag.TagBackedTagApplicator;
 import com.floweytf.customitemapi.impl.resource.ExtraItemDataImpl;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.nbt.ByteTag;
@@ -17,19 +19,18 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public final class CustomItemInstance {
     private final CustomItem item;
     private final NamespacedKey key;
-    private final Optional<String> variant;
+    private final String variant;
     private final Material baseItem;
     private final boolean isStateless;
 
     @Nullable
     private CachedTagApplicator applicator;
 
-    public CustomItemInstance(CustomItem item, NamespacedKey key, Optional<String> variant, Material baseItem,
+    public CustomItemInstance(CustomItem item, NamespacedKey key, String variant, Material baseItem,
                               boolean isStateless) {
         this.item = item;
         this.key = key;
@@ -66,21 +67,21 @@ public final class CustomItemInstance {
         }
 
         if (baseItem == Material.WRITTEN_BOOK) {
-            if (state.getAuthor() != null) {
-                applicator.put("author", StringTag.valueOf(state.getAuthor()));
+            if (state.author() != null) {
+                applicator.put("author", StringTag.valueOf(state.author()));
             }
 
-            if (state.getGeneration() != null) {
-                applicator.put("generation", IntTag.valueOf(state.getGeneration().ordinal()));
+            if (state.generation() != null) {
+                applicator.put("generation", IntTag.valueOf(state.generation().ordinal()));
             }
 
-            if (state.getBookPages() != null) {
+            if (state.bookPages() != null) {
                 applicator.put("pages",
-                    ListTagBuilder.of(state.getBookPages().stream().map(u -> GsonComponentSerializer.gson().serialize(u)).map(StringTag::valueOf)));
+                    ListTagBuilder.of(state.bookPages().stream().map(u -> GsonComponentSerializer.gson().serialize(u)).map(StringTag::valueOf)));
             }
 
-            if (state.getTitle() != null) {
-                applicator.put("title", StringTag.valueOf(GsonComponentSerializer.gson().serialize(state.getTitle())));
+            if (state.title() != null) {
+                applicator.put("title", StringTag.valueOf(GsonComponentSerializer.gson().serialize(state.title())));
             }
         }
 
@@ -89,6 +90,16 @@ public final class CustomItemInstance {
             .reduce(0, (a, b) -> a | b);
 
         applicator.put("HideFlags", IntTag.valueOf(hideFlags));
+
+        if (state.getNBTTag() != null) {
+            final var compound = ((NBTContainer) state.getNBTTag()).getCompound();
+            if (!(compound instanceof CompoundTag)) {
+                throw new IllegalStateException("Not NMS Compound?");
+            }
+
+            // copy it into the applicator...
+            ((CompoundTag) compound).tags.forEach(applicator::put);
+        }
     }
 
     public void apply(ItemStack stack) {
@@ -112,7 +123,7 @@ public final class CustomItemInstance {
         return key;
     }
 
-    public Optional<String> variant() {
+    public String variant() {
         return variant;
     }
 
